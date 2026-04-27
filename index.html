@@ -1087,9 +1087,9 @@ footer strong { color: white; }
 
 <!-- BOOKING -->
 <section class="booking" id="booking">
-  <div class="section-tag">Reserve Your Spot</div>
-  <h2 class="section-title">Book a Wash</h2>
-  <p class="section-sub">Pick a date and time that works for you. We'll have your car ready to shine.</p>
+  <div class="section-tag">Resarvera Din Tid</div>
+  <h2 class="section-title">Boka en Biltvätt</h2>
+  <p class="section-sub">Boka tid från tillgängliga tider. Betalning görs på plats via swish eller kontant.</p>
 
   <div class="booking-layout">
     <!-- Left: Calendar + time slots -->
@@ -1111,16 +1111,16 @@ footer strong { color: white; }
     <!-- Right: Form -->
     <div>
       <div class="booking-form">
-        <div class="form-title">Your Details</div>
+        <div class="form-title">Din Information</div>
         <div class="selected-summary" id="selected-summary">
           📅 <span id="summary-text">Select a date and time to continue</span>
         </div>
         <div class="form-group">
-          <label>Full Name</label>
+          <label>Namn</label>
           <input type="text" id="f-name" placeholder="Erik Lindström">
         </div>
         <div class="form-group">
-          <label>Phone Number</label>
+          <label>Telefonnummer</label>
           <input type="tel" id="f-phone" placeholder="+46 70-123 45 67">
         </div>
         <div class="form-group">
@@ -1130,7 +1130,7 @@ footer strong { color: white; }
         <div class="form-group">
           <label>Service</label>
           <select id="f-service">
-            <option value="">Select a service…</option>
+            <option value="">Välj en service…</option>
             <option value="Express Wash">Express Wash — 149 kr</option>
             <option value="Premium Wash">Premium Wash — 279 kr</option>
             <option value="Interior Detail">Interior Detail — 449 kr</option>
@@ -1152,8 +1152,8 @@ footer strong { color: white; }
 <!-- ADMIN -->
 <section class="admin-section" id="admin">
   <div class="section-tag">Admin Access</div>
-  <h2 class="section-title">Manage SparkWash</h2>
-  <p class="section-sub">Set available time slots, view incoming bookings, and export your data.</p>
+  <h2 class="section-title">För Anställda</h2>
+  <p class="section-sub">Bestäm tillgängliga tider, se inkommande bokningar.</p>
 
   <div class="admin-login" id="admin-login-form">
     <label>Admin Password</label>
@@ -1163,8 +1163,8 @@ footer strong { color: white; }
 
   <div class="admin-panel" id="admin-panel">
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('slots', this)">⏰ Manage Slots</button>
-      <button class="admin-tab" onclick="switchAdminTab('bookings', this)">📋 View Bookings</button>
+      <button class="admin-tab active" onclick="switchAdminTab('slots', this)">⏰ Lägg Till Tider</button>
+      <button class="admin-tab" onclick="switchAdminTab('bookings', this)">📋 Se Bokningar</button>
     </div>
 
     <!-- Slots pane -->
