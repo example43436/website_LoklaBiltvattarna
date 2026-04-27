@@ -1124,8 +1124,8 @@ footer strong { color: white; }
           <input type="tel" id="f-phone" placeholder="+46 70-123 45 67">
         </div>
         <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="f-email" placeholder="erik@email.com">
+          <label>Address</label>
+          <input type="text" id="f-address" placeholder="Industrigatan 12, Malmö">
         </div>
         <div class="form-group">
           <label>Service</label>
@@ -1190,11 +1190,11 @@ footer strong { color: white; }
         <table class="bookings-table">
           <thead>
             <tr>
-              <th>ID</th><th>Name</th><th>Phone</th><th>Service</th><th>Date</th><th>Time</th><th>Notes</th><th></th>
+              <th>ID</th><th>Name</th><th>Phone</th><th>Address</th><th>Service</th><th>Date</th><th>Time</th><th>Notes</th><th></th>
             </tr>
           </thead>
           <tbody id="bookings-tbody">
-            <tr><td colspan="8" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>
+            <tr><td colspan="9" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>
           </tbody>
         </table>
       </div>
@@ -1347,12 +1347,12 @@ function updateSummary() {
 async function submitBooking() {
   const name = document.getElementById('f-name').value.trim();
   const phone = document.getElementById('f-phone').value.trim();
-  const email = document.getElementById('f-email').value.trim();
+  const address = document.getElementById('f-address').value.trim();
   const service = document.getElementById('f-service').value;
   const notes = document.getElementById('f-notes').value.trim();
 
   if (!selectedDate || !selectedTime) { toast('Please select a date and time.', 'error'); return; }
-  if (!name || !phone || !email || !service) { toast('Please fill in all required fields.', 'error'); return; }
+  if (!name || !phone || !address || !service) { toast('Please fill in all required fields.', 'error'); return; }
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = 'Booking…';
@@ -1361,14 +1361,14 @@ async function submitBooking() {
     const res = await fetch('/api/bookings', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ name, phone, email, service, date: selectedDate, time: selectedTime, notes })
+      body: JSON.stringify({ name, phone, address, service, date: selectedDate, time: selectedTime, notes })
     });
     const data = await res.json();
     if (data.success) {
       toast(`✅ Booking confirmed! ID: ${data.booking_id}`);
       document.getElementById('f-name').value='';
       document.getElementById('f-phone').value='';
-      document.getElementById('f-email').value='';
+      document.getElementById('f-address').value='';
       document.getElementById('f-service').value='';
       document.getElementById('f-notes').value='';
       selectedDate = null; selectedTime = null;
@@ -1387,14 +1387,28 @@ async function submitBooking() {
 }
 
 // ── ADMIN ──────────────────────────────────────────────────────────────────
-function adminLogin() {
+async function adminLogin() {
   const pw = document.getElementById('admin-pw').value;
   if (!pw) { toast('Enter a password.', 'error'); return; }
-  adminPw = pw;
-  document.getElementById('admin-login-form').style.display = 'none';
-  document.getElementById('admin-panel').classList.add('visible');
-  initAdminCal();
-  loadAdminBookings();
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ admin_password: pw })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      toast(data.error || 'Invalid admin password.', 'error');
+      return;
+    }
+    adminPw = pw;
+    document.getElementById('admin-login-form').style.display = 'none';
+    document.getElementById('admin-panel').classList.add('visible');
+    initAdminCal();
+    loadAdminBookings();
+  } catch (e) {
+    toast('Could not verify admin password.', 'error');
+  }
 }
 
 function switchAdminTab(pane, btn) {
@@ -1486,12 +1500,12 @@ async function saveSlots() {
 // ── ADMIN BOOKINGS ─────────────────────────────────────────────────────────
 async function loadAdminBookings() {
   const tbody = document.getElementById('bookings-tbody');
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>';
   try {
     const res = await fetch(`/api/bookings?admin_password=${encodeURIComponent(adminPw)}`);
     const bookings = await res.json();
     if (!bookings.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;opacity:0.4;padding:32px;">No bookings yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;opacity:0.4;padding:32px;">No bookings yet.</td></tr>';
       return;
     }
     tbody.innerHTML = bookings.map(b => `
@@ -1499,6 +1513,7 @@ async function loadAdminBookings() {
         <td>${b.id}</td>
         <td>${b.name}</td>
         <td>${b.phone}</td>
+        <td>${b.address || '—'}</td>
         <td>${b.service}</td>
         <td>${b.date}</td>
         <td>${b.time}</td>
@@ -1507,7 +1522,7 @@ async function loadAdminBookings() {
       </tr>
     `).join('');
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#E74C3C;padding:32px;">Error loading bookings.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#E74C3C;padding:32px;">Error loading bookings.</td></tr>';
   }
 }
 

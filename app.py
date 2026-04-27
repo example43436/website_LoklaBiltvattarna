@@ -59,16 +59,14 @@ def set_slots():
     save_json(SLOTS_FILE, slots)
     return jsonify({'success': True})
 
-# ── admin auth ──────────────────────────────────────────────────────────────
+# ── bookings API ──────────────────────────────────────────────────────────
 
-@app.route('/api/admin-login', methods=['POST'])
+@app.route('/api/admin/login', methods=['POST'])
 def admin_login():
     data = request.json or {}
     if data.get('admin_password') != ADMIN_PASSWORD:
         return jsonify({'error': 'Unauthorized'}), 403
     return jsonify({'success': True})
-
-# ── bookings API ──────────────────────────────────────────────────────────
 
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
