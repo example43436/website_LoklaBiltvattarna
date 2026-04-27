@@ -4,13 +4,16 @@ import csv
 import os
 from datetime import datetime
 
-app = Flask(__name__, static_folder='static', template_folder='templates')
+BASE_DIR = os.path.dirname(__file__)
+app = Flask(__name__)
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+DATA_DIR = os.path.join(BASE_DIR, 'data')
 SLOTS_FILE = os.path.join(DATA_DIR, 'slots.json')
 BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
 CSV_FILE = os.path.join(DATA_DIR, 'bookings.csv')
 ADMIN_PASSWORD = "admin123"  # Change in production
+
+os.makedirs(DATA_DIR, exist_ok=True)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 
@@ -38,7 +41,7 @@ def export_csv():
 
 @app.route('/')
 def index():
-    return send_from_directory('templates', 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 # ── slots API ─────────────────────────────────────────────────────────────
 
@@ -156,4 +159,5 @@ def download_csv():
 
 if __name__ == '__main__':
     os.makedirs(DATA_DIR, exist_ok=True)
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", "5000"))
+    app.run(host='0.0.0.0', port=port, debug=False)
