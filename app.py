@@ -31,7 +31,7 @@ def export_csv():
     bookings = load_json(BOOKINGS_FILE, [])
     if not bookings:
         return
-    keys = ["id", "name", "phone", "email", "service", "date", "time", "notes", "created_at"]
+    keys = ["id", "name", "phone", "address", "service", "date", "time", "notes", "created_at"]
     with open(CSV_FILE, 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=keys, extrasaction='ignore')
         writer.writeheader()
@@ -59,6 +59,15 @@ def set_slots():
     save_json(SLOTS_FILE, slots)
     return jsonify({'success': True})
 
+# ── admin auth ──────────────────────────────────────────────────────────────
+
+@app.route('/api/admin-login', methods=['POST'])
+def admin_login():
+    data = request.json or {}
+    if data.get('admin_password') != ADMIN_PASSWORD:
+        return jsonify({'error': 'Unauthorized'}), 403
+    return jsonify({'success': True})
+
 # ── bookings API ──────────────────────────────────────────────────────────
 
 @app.route('/api/bookings', methods=['GET'])
@@ -72,7 +81,7 @@ def get_bookings():
 @app.route('/api/bookings', methods=['POST'])
 def create_booking():
     data = request.json
-    required = ['name', 'phone', 'email', 'service', 'date', 'time']
+    required = ['name', 'phone', 'address', 'service', 'date', 'time']
     for field in required:
         if not data.get(field):
             return jsonify({'error': f'Missing field: {field}'}), 400
@@ -100,7 +109,7 @@ def create_booking():
         'id': f"BK{datetime.now().strftime('%Y%m%d%H%M%S')}",
         'name': data['name'],
         'phone': data['phone'],
-        'email': data['email'],
+        'address': data['address'],
         'service': data['service'],
         'date': date,
         'time': time,
