@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SparkWash — Premium Car Wash</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111010;
+  --paper: #F5F0E8;
+  --cream: #EDE7D5;
+  --accent: #1A6B3C;
+  --accent-light: #2D9E5A;
+  --gold: #C8922A;
+  --water: #1B4F72;
+  --muted: #7A7060;
+  --error: #C0392B;
+  --card: #FFFFFF;
+  --border: rgba(0,0,0,0.10);
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 48px;
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.logo-drop {
+  width: 34px; height: 34px;
+  background: var(--accent);
+  border-radius: 50% 50% 50% 10%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 16px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex; gap: 32px;
+}
+
+nav ul a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+
+nav ul a:hover { color: var(--ink); }
+
+.nav-cta {
+  background: var(--accent);
+  color: white !important;
+  padding: 10px 22px;
+  border-radius: 999px;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--accent-light) !important; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #E8EDF5 0%, var(--paper) 50%, #EBF5ED 100%);
+  z-index: 0;
+}
+
+.hero-blobs {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+
+.blob-1 { width: 500px; height: 500px; background: #A8D5B8; top: -100px; right: -100px; animation: drift 12s ease-in-out infinite alternate; }
+.blob-2 { width: 350px; height: 350px; background: #A8C4E0; bottom: -50px; left: 200px; animation: drift 9s ease-in-out infinite alternate-reverse; }
+.blob-3 { width: 250px; height: 250px; background: #E8D5A8; top: 40%; left: -80px; animation: drift 14s ease-in-out infinite alternate; }
+
+@keyframes drift {
+  0% { transform: translate(0,0) scale(1); }
+  100% { transform: translate(30px, -20px) scale(1.05); }
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  max-width: 680px;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 28px;
+}
+
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  line-height: 1.05;
+  margin-bottom: 24px;
+  color: var(--ink);
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 40px;
+  max-width: 480px;
+}
+
+.hero-actions {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 8px 24px rgba(26,107,60,0.3);
+}
+.btn-primary:hover {
+  background: var(--accent-light);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(26,107,60,0.35);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--border);
+}
+.btn-outline:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.hero-stats {
+  display: flex; gap: 40px;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+
+.stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  color: var(--ink);
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── SECTIONS ── */
+section {
+  padding: 100px 48px;
+}
+
+.section-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+/* ── PHONE BANNER ── */
+.phone-banner {
+  background: var(--accent);
+  color: white;
+  text-align: center;
+  padding: 28px 48px;
+  display: flex; align-items: center; justify-content: center; gap: 24px;
+  flex-wrap: wrap;
+}
+
+.phone-banner p {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.phone-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.phone-banner .phone-link {
+  color: white;
+  text-decoration: none;
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+}
+
+/* ── SERVICES ── */
+.services { background: var(--cream); }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 56px;
+}
+
+.service-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 36px 28px;
+  border: 1px solid var(--border);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow);
+}
+
+.service-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.service-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.35rem;
+  margin-bottom: 10px;
+}
+
+.service-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+
+.service-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ── GALLERY / TEAM ── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 260px 200px;
+  gap: 16px;
+  margin-top: 56px;
+}
+
+.gallery-item {
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  background: var(--cream);
+}
+
+.gallery-item:first-child { grid-column: span 2; }
+
+.gallery-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.gallery-item:hover .gallery-img { transform: scale(1.05); }
+
+.gallery-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.65));
+  color: white;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+
+.gallery-item:hover .gallery-caption { transform: translateY(0); }
+
+/* Placeholder images using SVG */
+.gallery-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px;
+  font-size: 3rem;
+}
+
+/* ── TEAM ── */
+.team { background: var(--cream); }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+  margin-top: 56px;
+}
+
+.team-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.25s;
+}
+
+.team-card:hover { transform: translateY(-4px); }
+
+.team-photo {
+  height: 200px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.team-info {
+  padding: 20px;
+}
+
+.team-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.team-role {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── BOOKING SECTION ── */
+.booking { background: white; }
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 64px;
+  margin-top: 56px;
+  align-items: start;
+}
+
+/* calendar */
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cal-month {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+}
+
+.cal-nav {
+  background: none; border: 1px solid var(--border);
+  width: 34px; height: 34px; border-radius: 50%;
+  cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.cal-nav:hover { background: var(--cream); }
+
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day-label {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1.5px solid transparent;
+  color: var(--muted);
+}
+
+.cal-day.empty { cursor: default; }
+.cal-day.past { opacity: 0.3; cursor: default; }
+.cal-day.has-slots {
+  color: var(--ink);
+  background: #EBF5EE;
+  border-color: #C8E8D4;
+}
+.cal-day.has-slots:hover, .cal-day.selected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.cal-legend {
+  display: flex; gap: 16px; margin-top: 12px;
+  font-size: 0.78rem; color: var(--muted);
+}
+
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* time slots */
+.time-slots-area {
+  margin-top: 24px;
+}
+
+.time-slots-title {
+  font-weight: 600; margin-bottom: 12px; font-size: 0.9rem;
+}
+
+.time-slots-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.time-slot-btn {
+  padding: 12px 8px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.time-slot-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: #EBF5EE;
+}
+
+.time-slot-btn.selected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.time-slot-btn:disabled {
+  opacity: 0.4; cursor: not-allowed;
+  background: var(--cream);
+}
+
+.time-slot-btn .slot-time { font-weight: 600; font-size: 0.92rem; }
+.time-slot-btn .slot-avail { font-size: 0.72rem; color: inherit; opacity: 0.7; margin-top: 2px; }
+
+/* booking form */
+.booking-form {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 36px;
+  border: 1px solid var(--border);
+}
+
+.form-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 28px;
+}
+
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+}
+
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+.selected-summary {
+  background: white;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--accent);
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.selected-summary.visible { display: block; }
+
+.form-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.form-submit:hover { background: var(--accent-light); }
+.form-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── TOAST / ALERTS ── */
+.toast-container {
+  position: fixed; bottom: 30px; right: 30px;
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 999;
+}
+
+.toast {
+  padding: 14px 20px;
+  border-radius: 10px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease;
+  max-width: 340px;
+}
+
+.toast.success { background: var(--accent); }
+.toast.error { background: var(--error); }
+
+@keyframes slideIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ── ADMIN PANEL ── */
+.admin-section { background: var(--ink); color: white; }
+
+.admin-section .section-tag { color: var(--gold); }
+.admin-section .section-title { color: white; }
+.admin-section .section-sub { color: rgba(255,255,255,0.55); }
+
+.admin-login {
+  max-width: 400px;
+  margin: 40px auto 0;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  padding: 36px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-login label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.admin-login input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  margin-bottom: 16px;
+}
+
+.admin-login input:focus {
+  border-color: var(--gold);
+}
+
+.btn-gold {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-gold:hover { opacity: 0.85; }
+
+.admin-panel {
+  display: none;
+  margin-top: 40px;
+}
+
+.admin-panel.visible { display: block; }
+
+.admin-tabs {
+  display: flex; gap: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 32px;
+}
+
+.admin-tab {
+  padding: 10px 22px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-tab.active {
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.admin-pane { display: none; }
+.admin-pane.active { display: block; }
+
+/* slot manager */
+.slot-manager-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+}
+
+.slot-cal-small .cal-day { font-size: 0.78rem; }
+
+.slots-editor {
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.slots-date-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.slot-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px;
+}
+
+.slot-row input[type="time"],
+.slot-row input[type="number"] {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  color: white;
+  padding: 8px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.slot-row input:focus {
+  border-color: var(--gold);
+}
+
+.slot-row label { color: rgba(255,255,255,0.6); font-size: 0.82rem; }
+
+.btn-remove-slot {
+  background: rgba(192,57,43,0.3);
+  border: 1px solid rgba(192,57,43,0.5);
+  color: #E74C3C;
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+
+.btn-remove-slot:hover { background: rgba(192,57,43,0.5); }
+
+.btn-add-slot {
+  background: rgba(200,146,42,0.15);
+  border: 1.5px dashed rgba(200,146,42,0.5);
+  color: var(--gold);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-add-slot:hover { background: rgba(200,146,42,0.25); }
+
+/* bookings table */
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.bookings-table th {
+  text-align: left;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.bookings-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.85);
+}
+
+.bookings-table tr:last-child td { border-bottom: none; }
+
+.bookings-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+.btn-delete {
+  background: rgba(192,57,43,0.2);
+  border: 1px solid rgba(192,57,43,0.4);
+  color: #E74C3C;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-delete:hover { background: rgba(192,57,43,0.4); }
+
+.btn-csv {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  background: var(--gold);
+  color: white;
+  border-radius: 999px;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  margin-bottom: 20px;
+}
+
+.btn-csv:hover { opacity: 0.85; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  padding: 32px 48px;
+  font-size: 0.85rem;
+}
+
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer strong { color: white; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  nav ul { display: none; }
+  .hero { padding: 100px 24px 60px; }
+  section { padding: 70px 24px; }
+  .booking-layout { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .gallery-item:first-child { grid-column: span 2; }
+  .slot-manager-layout { grid-template-columns: 1fr; }
+}
+
+/* ── SCROLL FADE IN ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-drop">💧</div>
+    SparkWash
+  </a>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#booking">Book</a></li>
+    <li><a href="#admin" class="nav-cta">Admin</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ Premium Car Wash · Malmö</div>
+    <h1>Your car,<br><em>brilliantly</em><br>clean.</h1>
+    <p class="hero-sub">Professional hand washes, interior detailing, and ceramic coatings — done with care by our expert team.</p>
+    <div class="hero-actions">
+      <a href="#booking" class="btn btn-primary">Book a Wash →</a>
+      <a href="#services" class="btn btn-outline">Our Services</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">2,400+</span>
+        <span class="stat-label">Cars Washed</span>
+      </div>
+      <div>
+        <span class="stat-num">4.9★</span>
+        <span class="stat-label">Average Rating</span>
+      </div>
+      <div>
+        <span class="stat-num">5 yrs</span>
+        <span class="stat-label">In Business</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHONE BANNER -->
+<div class="phone-banner">
+  <p>Questions? Give us a call:</p>
+  <a href="tel:+46701234567" class="phone-link">📞 +46 70-123 45 67</a>
+  <p>Mon–Sat, 8:00 – 18:00</p>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-tag">What We Offer</div>
+  <h2 class="section-title">Services & Pricing</h2>
+  <p class="section-sub">All washes include a post-wash inspection to make sure you drive off spotless.</p>
+  <div class="services-grid">
+    <div class="service-card fade-up">
+      <div class="service-icon" style="background:#EBF5EE;">🚿</div>
+      <h3>Express Wash</h3>
+      <p>Quick exterior hand wash with rinse and dry. Perfect for a regular refresh.</p>
+      <div class="service-price">149 kr</div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-icon" style="background:#EDF3FB;">✨</div>
+      <h3>Premium Wash</h3>
+      <p>Full exterior wash + wheel clean + window treatment + air freshener inside.</p>
+      <div class="service-price">279 kr</div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-icon" style="background:#FEF9EC;">🛋️</div>
+      <h3>Interior Detail</h3>
+      <p>Deep vacuum, dashboard wipe, door panels, mats shampoo, and leather conditioning.</p>
+      <div class="service-price">449 kr</div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-icon" style="background:#FDF0EE;">🏆</div>
+      <h3>Full Detail</h3>
+      <p>Our signature: exterior + interior + engine bay + polish. The complete experience.</p>
+      <div class="service-price">899 kr</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-tag">In Action</div>
+  <h2 class="section-title">See Our Work</h2>
+  <p class="section-sub">A glimpse of the results we deliver every day.</p>
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#1B4F72,#2E86C1); color:white;">
+        🚗<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Full Detail — Before & After</span>
+      </div>
+      <div class="gallery-caption">Before & After — Full Detail Package</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#1A6B3C,#2D9E5A); color:white;">
+        💧<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Premium Exterior Wash</span>
+      </div>
+      <div class="gallery-caption">Premium Hand Wash in Progress</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#7D6608,#C8922A); color:white;">
+        ✨<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Ceramic Coating Application</span>
+      </div>
+      <div class="gallery-caption">Ceramic Coating — Year-long Protection</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#5B2333,#943126); color:white;">
+        🛋️<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Interior Detail</span>
+      </div>
+      <div class="gallery-caption">Interior Deep Clean Results</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#1B2631,#2C3E50); color:white;">
+        🔧<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Engine Bay Detail</span>
+      </div>
+      <div class="gallery-caption">Engine Bay — Spotless Finish</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="section-tag">The Team</div>
+  <h2 class="section-title">People Behind the Shine</h2>
+  <p class="section-sub">Our crew brings passion and precision to every vehicle that pulls in.</p>
+  <div class="team-grid">
+    <div class="team-card fade-up">
+      <div class="team-photo" style="background:linear-gradient(135deg,#D4E6F1,#AED6F1);">👨‍🔧</div>
+      <div class="team-info">
+        <div class="team-name">Erik Lindström</div>
+        <div class="team-role">Founder & Head Detailer</div>
+      </div>
+    </div>
+    <div class="team-card fade-up">
+      <div class="team-photo" style="background:linear-gradient(135deg,#D5F5E3,#A9DFBF);">👩‍💼</div>
+      <div class="team-info">
+        <div class="team-name">Sara Johansson</div>
+        <div class="team-role">Customer Experience</div>
+      </div>
+    </div>
+    <div class="team-card fade-up">
+      <div class="team-photo" style="background:linear-gradient(135deg,#FDEBD0,#FAD7A0);">👨‍🔬</div>
+      <div class="team-info">
+        <div class="team-name">Marcus Berg</div>
+        <div class="team-role">Ceramic Coating Specialist</div>
+      </div>
+    </div>
+    <div class="team-card fade-up">
+      <div class="team-photo" style="background:linear-gradient(135deg,#E8DAEF,#D2B4DE);">👷</div>
+      <div class="team-info">
+        <div class="team-name">Lena Karlsson</div>
+        <div class="team-role">Interior Detailer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking" id="booking">
+  <div class="section-tag">Reserve Your Spot</div>
+  <h2 class="section-title">Book a Wash</h2>
+  <p class="section-sub">Pick a date and time that works for you. We'll have your car ready to shine.</p>
+
+  <div class="booking-layout">
+    <!-- Left: Calendar + time slots -->
+    <div>
+      <div id="booking-calendar"></div>
+
+      <div class="time-slots-area" id="time-slots-area" style="display:none;">
+        <div class="time-slots-title">Available times for <span id="selected-date-label"></span></div>
+        <div class="time-slots-grid" id="time-slots-grid"></div>
+      </div>
+
+      <div class="cal-legend" style="margin-top:16px;">
+        <span><span class="legend-dot" style="background:#2D9E5A;"></span>Available</span>
+        <span><span class="legend-dot" style="background:#ccc;"></span>No slots</span>
+        <span><span class="legend-dot" style="background:#1A6B3C;"></span>Selected</span>
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div>
+      <div class="booking-form">
+        <div class="form-title">Your Details</div>
+        <div class="selected-summary" id="selected-summary">
+          📅 <span id="summary-text">Select a date and time to continue</span>
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="f-name" placeholder="Erik Lindström">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="+46 70-123 45 67">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="f-email" placeholder="erik@email.com">
+        </div>
+        <div class="form-group">
+          <label>Service</label>
+          <select id="f-service">
+            <option value="">Select a service…</option>
+            <option value="Express Wash">Express Wash — 149 kr</option>
+            <option value="Premium Wash">Premium Wash — 279 kr</option>
+            <option value="Interior Detail">Interior Detail — 449 kr</option>
+            <option value="Full Detail">Full Detail — 899 kr</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <textarea id="f-notes" placeholder="e.g. SUV, needs extra time on rims…"></textarea>
+        </div>
+        <button class="form-submit" id="submit-btn" onclick="submitBooking()">
+          Confirm Booking
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section class="admin-section" id="admin">
+  <div class="section-tag">Admin Access</div>
+  <h2 class="section-title">Manage SparkWash</h2>
+  <p class="section-sub">Set available time slots, view incoming bookings, and export your data.</p>
+
+  <div class="admin-login" id="admin-login-form">
+    <label>Admin Password</label>
+    <input type="password" id="admin-pw" placeholder="Enter password…" onkeydown="if(event.key==='Enter') adminLogin()">
+    <button class="btn-gold" onclick="adminLogin()">Sign In →</button>
+  </div>
+
+  <div class="admin-panel" id="admin-panel">
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('slots', this)">⏰ Manage Slots</button>
+      <button class="admin-tab" onclick="switchAdminTab('bookings', this)">📋 View Bookings</button>
+    </div>
+
+    <!-- Slots pane -->
+    <div class="admin-pane active" id="pane-slots">
+      <div class="slot-manager-layout">
+        <div>
+          <div id="admin-calendar"></div>
+        </div>
+        <div class="slots-editor" id="slots-editor">
+          <div class="slots-date-title" id="admin-date-title">Select a date to edit slots</div>
+          <div id="slot-rows"></div>
+          <button class="btn-add-slot" id="btn-add-slot" style="display:none;" onclick="addSlotRow()">+ Add Time Slot</button>
+          <br><br>
+          <button class="btn-gold" id="btn-save-slots" style="display:none;width:auto;padding:12px 28px;border-radius:999px;" onclick="saveSlots()">Save Slots</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookings pane -->
+    <div class="admin-pane" id="pane-bookings">
+      <a class="btn-csv" id="csv-download-link" href="#" onclick="downloadCSV(event)">⬇ Download CSV</a>
+      <div style="overflow-x:auto;">
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Phone</th><th>Service</th><th>Date</th><th>Time</th><th>Notes</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody">
+            <tr><td colspan="8" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>SparkWash</strong> · Industrigatan 12, 211 46 Malmö · <a href="tel:+46701234567">+46 70-123 45 67</a></p>
+  <p style="margin-top:8px;">© 2026 SparkWash. All rights reserved.</p>
+</footer>
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+const API = '';  // same origin
+let adminPw = '';
+let selectedDate = null;
+let selectedTime = null;
+let currentCalMonth = null;  // for booking cal
+let adminCalMonth = null;    // for admin cal
+let adminSelectedDate = null;
+let slotsCache = {};         // all slots from server
+let adminEditSlots = [];     // slots being edited for adminSelectedDate
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function toast(msg, type='success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ── CALENDAR HELPERS ───────────────────────────────────────────────────────
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function buildCalendar(containerId, month, year, onDayClick, isAdmin=false) {
+  const container = document.getElementById(containerId);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  let html = `<div class="cal-header">
+    <button class="cal-nav" onclick="${isAdmin?'adminCalPrev':'calPrev'}()">‹</button>
+    <span class="cal-month">${MONTHS[month]} ${year}</span>
+    <button class="cal-nav" onclick="${isAdmin?'adminCalNext':'calNext'}()">›</button>
+  </div>
+  <div class="cal-grid">
+    ${DAYS.map(d=>`<div class="cal-day-label">${d}</div>`).join('')}`;
+
+  for (let i=0; i<firstDay; i++) html += `<div class="cal-day empty"></div>`;
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const date = new Date(year, month, d);
+    const isPast = date < today;
+    const hasSlots = slotsCache[dateStr] && slotsCache[dateStr].length > 0;
+    let cls = 'cal-day';
+    if (isPast && !isAdmin) cls += ' past';
+    if (hasSlots) cls += ' has-slots';
+    if (dateStr === selectedDate && !isAdmin) cls += ' selected';
+    if (dateStr === adminSelectedDate && isAdmin) cls += ' selected';
+    const clickable = (!isPast || isAdmin) ? `onclick="${isAdmin?'adminDayClick':'dayClick'}('${dateStr}')"` : '';
+    html += `<div class="${cls}" data-date="${dateStr}" ${clickable}>${d}</div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+// ── BOOKING CALENDAR ───────────────────────────────────────────────────────
+function initBookingCal() {
+  const now = new Date();
+  currentCalMonth = { month: now.getMonth(), year: now.getFullYear() };
+  buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
+}
+
+function calPrev() {
+  const d = new Date(currentCalMonth.year, currentCalMonth.month - 1, 1);
+  currentCalMonth = { month: d.getMonth(), year: d.getFullYear() };
+  buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
+}
+
+function calNext() {
+  const d = new Date(currentCalMonth.year, currentCalMonth.month + 1, 1);
+  currentCalMonth = { month: d.getMonth(), year: d.getFullYear() };
+  buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
+}
+
+async function dayClick(dateStr) {
+  selectedDate = dateStr;
+  selectedTime = null;
+  updateSummary();
+  buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
+  await loadTimeSlots(dateStr);
+}
+
+async function loadTimeSlots(dateStr) {
+  const area = document.getElementById('time-slots-area');
+  const grid = document.getElementById('time-slots-grid');
+  document.getElementById('selected-date-label').textContent = dateStr;
+  area.style.display = 'block';
+  grid.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;">Loading…</div>';
+
+  const res = await fetch(`/api/availability?date=${dateStr}`);
+  const slots = await res.json();
+
+  if (!slots.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;">No slots available on this date.</div>';
+    return;
+  }
+
+  grid.innerHTML = slots.map(s => {
+    const avail = s.available > 0;
+    return `<button class="time-slot-btn${selectedTime===s.time?' selected':''}"
+      ${avail ? `onclick="selectTime('${s.time}')"` : 'disabled'}
+      title="${s.booked}/${s.capacity} booked">
+      <div class="slot-time">${s.time}</div>
+      <div class="slot-avail">${avail ? s.available+' spot'+(s.available>1?'s':'')+' left' : 'Full'}</div>
+    </button>`;
+  }).join('');
+}
+
+function selectTime(time) {
+  selectedTime = time;
+  updateSummary();
+  // Re-render slots to show selection
+  document.querySelectorAll('.time-slot-btn').forEach(b => {
+    b.classList.toggle('selected', b.querySelector('.slot-time').textContent === time);
+  });
+}
+
+function updateSummary() {
+  const s = document.getElementById('selected-summary');
+  const t = document.getElementById('summary-text');
+  if (selectedDate && selectedTime) {
+    s.classList.add('visible');
+    t.textContent = `${selectedDate} at ${selectedTime}`;
+  } else {
+    s.classList.remove('visible');
+  }
+}
+
+async function submitBooking() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const service = document.getElementById('f-service').value;
+  const notes = document.getElementById('f-notes').value.trim();
+
+  if (!selectedDate || !selectedTime) { toast('Please select a date and time.', 'error'); return; }
+  if (!name || !phone || !email || !service) { toast('Please fill in all required fields.', 'error'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Booking…';
+
+  try {
+    const res = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name, phone, email, service, date: selectedDate, time: selectedTime, notes })
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast(`✅ Booking confirmed! ID: ${data.booking_id}`);
+      document.getElementById('f-name').value='';
+      document.getElementById('f-phone').value='';
+      document.getElementById('f-email').value='';
+      document.getElementById('f-service').value='';
+      document.getElementById('f-notes').value='';
+      selectedDate = null; selectedTime = null;
+      updateSummary();
+      await loadSlots();
+      buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
+      document.getElementById('time-slots-area').style.display='none';
+    } else {
+      toast(data.error || 'Booking failed.', 'error');
+    }
+  } catch(e) {
+    toast('Network error. Is the server running?', 'error');
+  }
+
+  btn.disabled = false; btn.textContent = 'Confirm Booking';
+}
+
+// ── ADMIN ──────────────────────────────────────────────────────────────────
+function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  if (!pw) { toast('Enter a password.', 'error'); return; }
+  adminPw = pw;
+  document.getElementById('admin-login-form').style.display = 'none';
+  document.getElementById('admin-panel').classList.add('visible');
+  initAdminCal();
+  loadAdminBookings();
+}
+
+function switchAdminTab(pane, btn) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pane-'+pane).classList.add('active');
+  if (pane === 'bookings') loadAdminBookings();
+}
+
+// ── ADMIN CALENDAR ─────────────────────────────────────────────────────────
+function initAdminCal() {
+  const now = new Date();
+  adminCalMonth = { month: now.getMonth(), year: now.getFullYear() };
+  buildCalendar('admin-calendar', adminCalMonth.month, adminCalMonth.year, adminDayClick, true);
+}
+
+function adminCalPrev() {
+  const d = new Date(adminCalMonth.year, adminCalMonth.month - 1, 1);
+  adminCalMonth = { month: d.getMonth(), year: d.getFullYear() };
+  buildCalendar('admin-calendar', adminCalMonth.month, adminCalMonth.year, adminDayClick, true);
+}
+
+function adminCalNext() {
+  const d = new Date(adminCalMonth.year, adminCalMonth.month + 1, 1);
+  adminCalMonth = { month: d.getMonth(), year: d.getFullYear() };
+  buildCalendar('admin-calendar', adminCalMonth.month, adminCalMonth.year, adminDayClick, true);
+}
+
+function adminDayClick(dateStr) {
+  adminSelectedDate = dateStr;
+  buildCalendar('admin-calendar', adminCalMonth.month, adminCalMonth.year, adminDayClick, true);
+  renderSlotsEditor();
+}
+
+function renderSlotsEditor() {
+  if (!adminSelectedDate) return;
+  document.getElementById('admin-date-title').textContent = `Slots for ${adminSelectedDate}`;
+  document.getElementById('btn-add-slot').style.display = '';
+  document.getElementById('btn-save-slots').style.display = '';
+
+  adminEditSlots = JSON.parse(JSON.stringify(slotsCache[adminSelectedDate] || []));
+  renderSlotRows();
+}
+
+function renderSlotRows() {
+  const container = document.getElementById('slot-rows');
+  container.innerHTML = adminEditSlots.map((s, i) => `
+    <div class="slot-row" id="slot-row-${i}">
+      <input type="time" value="${s.time}" onchange="adminEditSlots[${i}].time=this.value">
+      <label>Capacity:</label>
+      <input type="number" min="1" max="20" value="${s.capacity}" style="width:70px;" onchange="adminEditSlots[${i}].capacity=parseInt(this.value)">
+      <button class="btn-remove-slot" onclick="removeSlotRow(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function addSlotRow() {
+  adminEditSlots.push({ time: '09:00', capacity: 1 });
+  renderSlotRows();
+}
+
+function removeSlotRow(i) {
+  adminEditSlots.splice(i, 1);
+  renderSlotRows();
+}
+
+async function saveSlots() {
+  if (!adminSelectedDate) return;
+  const newSlots = JSON.parse(JSON.stringify(slotsCache));
+  newSlots[adminSelectedDate] = adminEditSlots;
+
+  const res = await fetch('/api/slots', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ admin_password: adminPw, slots: newSlots })
+  });
+  const data = await res.json();
+  if (data.success) {
+    toast('Slots saved!');
+    await loadSlots();
+    buildCalendar('admin-calendar', adminCalMonth.month, adminCalMonth.year, adminDayClick, true);
+    buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
+  } else {
+    toast(data.error || 'Error saving slots.', 'error');
+  }
+}
+
+// ── ADMIN BOOKINGS ─────────────────────────────────────────────────────────
+async function loadAdminBookings() {
+  const tbody = document.getElementById('bookings-tbody');
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>';
+  try {
+    const res = await fetch(`/api/bookings?admin_password=${encodeURIComponent(adminPw)}`);
+    const bookings = await res.json();
+    if (!bookings.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;opacity:0.4;padding:32px;">No bookings yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = bookings.map(b => `
+      <tr>
+        <td>${b.id}</td>
+        <td>${b.name}</td>
+        <td>${b.phone}</td>
+        <td>${b.service}</td>
+        <td>${b.date}</td>
+        <td>${b.time}</td>
+        <td>${b.notes || '—'}</td>
+        <td><button class="btn-delete" onclick="deleteBooking('${b.id}')">Delete</button></td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#E74C3C;padding:32px;">Error loading bookings.</td></tr>';
+  }
+}
+
+async function deleteBooking(id) {
+  if (!confirm('Delete this booking?')) return;
+  const res = await fetch(`/api/bookings/${id}`, {
+    method: 'DELETE',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ admin_password: adminPw })
+  });
+  const data = await res.json();
+  if (data.success) {
+    toast('Booking deleted.');
+    loadAdminBookings();
+    await loadSlots();
+  } else {
+    toast(data.error || 'Error deleting.', 'error');
+  }
+}
+
+function downloadCSV(e) {
+  e.preventDefault();
+  window.location.href = `/api/csv?admin_password=${encodeURIComponent(adminPw)}`;
+}
+
+// ── LOAD SLOTS ─────────────────────────────────────────────────────────────
+async function loadSlots() {
+  try {
+    const res = await fetch('/api/slots');
+    slotsCache = await res.json();
+  } catch(e) {
+    slotsCache = {};
+  }
+}
+
+// ── FADE IN ON SCROLL ─────────────────────────────────────────────────────
+function initFadeIn() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+(async function init() {
+  await loadSlots();
+  initBookingCal();
+  initFadeIn();
+})();
+</script>
+</body>
+</html>
