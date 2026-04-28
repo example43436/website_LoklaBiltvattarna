@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SparkWash — Premium Car Wash</title>
+<title>SparkWash — Biltvätt i Malmö</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -28,7 +28,7 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--paper);
+  background: #f7f7f7;
   color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;
@@ -39,8 +39,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 48px;
-  background: rgba(245,240,232,0.92);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border-bottom: 1px solid var(--border);
 }
 
@@ -92,17 +91,17 @@ nav ul a:hover { color: var(--ink); }
   padding: 120px 48px 80px;
   position: relative;
   overflow: hidden;
+  background: #ffffff;
 }
 
 .hero-bg {
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, #E8EDF5 0%, var(--paper) 50%, #EBF5ED 100%);
+  background: #ffffff;
   z-index: 0;
 }
 
 .hero-blobs {
-  position: absolute; inset: 0; z-index: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .blob {
@@ -221,7 +220,8 @@ nav ul a:hover { color: var(--ink); }
 
 /* ── SECTIONS ── */
 section {
-  padding: 100px 48px;
+  padding: 80px 48px;
+  background: #ffffff;
 }
 
 .section-tag {
@@ -278,7 +278,7 @@ section {
 }
 
 /* ── SERVICES ── */
-.services { background: var(--cream); }
+.services { background: #f2f2f2; }
 
 .services-grid {
   display: grid;
@@ -289,15 +289,15 @@ section {
 
 .service-card {
   background: var(--card);
-  border-radius: var(--radius);
+  border-radius: 4px;
   padding: 36px 28px;
   border: 1px solid var(--border);
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: none;
 }
 
 .service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow);
+  transform: none;
+  box-shadow: none;
 }
 
 .service-icon {
@@ -327,98 +327,23 @@ section {
   color: var(--accent);
 }
 
-/* ── GALLERY / TEAM ── */
-.gallery-grid {
+/* ── SHOWCASE IMAGES ── */
+.showcase-images {
+  padding: 24px 48px 0;
+  background: #ffffff;
+}
+
+.showcase-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 260px 200px;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-top: 56px;
 }
 
-.gallery-item {
-  border-radius: var(--radius);
-  overflow: hidden;
-  position: relative;
-  background: var(--cream);
-}
-
-.gallery-item:first-child { grid-column: span 2; }
-
-.gallery-img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s;
-}
-
-.gallery-item:hover .gallery-img { transform: scale(1.05); }
-
-.gallery-caption {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 20px;
-  background: linear-gradient(transparent, rgba(0,0,0,0.65));
-  color: white;
-  font-size: 0.88rem;
-  font-weight: 500;
-  transform: translateY(100%);
-  transition: transform 0.3s;
-}
-
-.gallery-item:hover .gallery-caption { transform: translateY(0); }
-
-/* Placeholder images using SVG */
-.gallery-placeholder {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 10px;
-  font-size: 3rem;
-}
-
-/* ── TEAM ── */
-.team { background: var(--cream); }
-
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 28px;
-  margin-top: 56px;
-}
-
-.team-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  transition: transform 0.25s;
-}
-
-.team-card:hover { transform: translateY(-4px); }
-
-.team-photo {
-  height: 200px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 4rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.team-info {
-  padding: 20px;
-}
-
-.team-name {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.2rem;
-  margin-bottom: 4px;
-}
-
-.team-role {
-  font-size: 0.82rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.showcase-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
 }
 
 /* ── BOOKING SECTION ── */
@@ -901,8 +826,7 @@ footer strong { color: white; }
   .hero { padding: 100px 24px 60px; }
   section { padding: 70px 24px; }
   .booking-layout { grid-template-columns: 1fr; }
-  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
-  .gallery-item:first-child { grid-column: span 2; }
+  .showcase-grid { grid-template-columns: 1fr; }
   .slot-manager-layout { grid-template-columns: 1fr; }
 }
 
@@ -928,10 +852,8 @@ footer strong { color: white; }
     SparkWash
   </a>
   <ul>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#team">Team</a></li>
-    <li><a href="#booking">Book</a></li>
+    <li><a href="#services">Tjänster</a></li>
+    <li><a href="#booking">Boka</a></li>
     <li><a href="#admin" class="nav-cta">Admin</a></li>
   </ul>
 </nav>
@@ -945,25 +867,25 @@ footer strong { color: white; }
     <div class="blob blob-3"></div>
   </div>
   <div class="hero-content">
-    <div class="hero-badge">✦ Premium Car Wash · Malmö</div>
-    <h1>Your car,<br><em>brilliantly</em><br>clean.</h1>
-    <p class="hero-sub">Professional hand washes, interior detailing, and ceramic coatings — done with care by our expert team.</p>
+    <div class="hero-badge">✦ Professionell biltvätt · Malmö</div>
+    <h1>Din bil,<br><em>skinande</em><br>ren.</h1>
+    <p class="hero-sub">Handtvätt, invändig rekond och keramisk behandling med fokus på kvalitet och noggrannhet.</p>
     <div class="hero-actions">
-      <a href="#booking" class="btn btn-primary">Book a Wash →</a>
-      <a href="#services" class="btn btn-outline">Our Services</a>
+      <a href="#booking" class="btn btn-primary">Boka tvätt →</a>
+      <a href="#services" class="btn btn-outline">Våra tjänster</a>
     </div>
     <div class="hero-stats">
       <div>
         <span class="stat-num">2,400+</span>
-        <span class="stat-label">Cars Washed</span>
+        <span class="stat-label">Tvättade bilar</span>
       </div>
       <div>
         <span class="stat-num">4.9★</span>
-        <span class="stat-label">Average Rating</span>
+        <span class="stat-label">Snittbetyg</span>
       </div>
       <div>
         <span class="stat-num">5 yrs</span>
-        <span class="stat-label">In Business</span>
+        <span class="stat-label">År i branschen</span>
       </div>
     </div>
   </div>
@@ -971,117 +893,48 @@ footer strong { color: white; }
 
 <!-- PHONE BANNER -->
 <div class="phone-banner">
-  <p>Questions? Give us a call:</p>
+  <p>Frågor? Ring oss:</p>
   <a href="tel:+46701234567" class="phone-link">📞 +46 70-123 45 67</a>
-  <p>Mon–Sat, 8:00 – 18:00</p>
+  <p>Mån–Lör, 8:00 – 18:00</p>
 </div>
 
 <!-- SERVICES -->
 <section class="services" id="services">
-  <div class="section-tag">What We Offer</div>
-  <h2 class="section-title">Services & Pricing</h2>
-  <p class="section-sub">All washes include a post-wash inspection to make sure you drive off spotless.</p>
+  <div class="section-tag">Våra tjänster</div>
+  <h2 class="section-title">Tjänster och priser</h2>
+  <p class="section-sub">Alla tvättar avslutas med en kontroll så att bilen lämnar oss i toppskick.</p>
   <div class="services-grid">
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#EBF5EE;">🚿</div>
-      <h3>Express Wash</h3>
-      <p>Quick exterior hand wash with rinse and dry. Perfect for a regular refresh.</p>
+      <h3>Express-tvätt</h3>
+      <p>Snabb handtvätt utvändigt med avspolning och torkning.</p>
       <div class="service-price">149 kr</div>
     </div>
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#EDF3FB;">✨</div>
-      <h3>Premium Wash</h3>
-      <p>Full exterior wash + wheel clean + window treatment + air freshener inside.</p>
+      <h3>Premium-tvätt</h3>
+      <p>Utvändig heltvätt med fälgrengöring och glasbehandling.</p>
       <div class="service-price">279 kr</div>
     </div>
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#FEF9EC;">🛋️</div>
-      <h3>Interior Detail</h3>
-      <p>Deep vacuum, dashboard wipe, door panels, mats shampoo, and leather conditioning.</p>
+      <h3>Invändig rekond</h3>
+      <p>Djupdammsugning, rengöring av paneler och mattor samt vård av interiören.</p>
       <div class="service-price">449 kr</div>
     </div>
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#FDF0EE;">🏆</div>
-      <h3>Full Detail</h3>
-      <p>Our signature: exterior + interior + engine bay + polish. The complete experience.</p>
+      <h3>Helrekond</h3>
+      <p>Vårt mest kompletta paket: utvändigt, invändigt, motorrum och polering.</p>
       <div class="service-price">899 kr</div>
     </div>
   </div>
 </section>
 
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="section-tag">In Action</div>
-  <h2 class="section-title">See Our Work</h2>
-  <p class="section-sub">A glimpse of the results we deliver every day.</p>
-  <div class="gallery-grid">
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#1B4F72,#2E86C1); color:white;">
-        🚗<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Full Detail — Before & After</span>
-      </div>
-      <div class="gallery-caption">Before & After — Full Detail Package</div>
-    </div>
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#1A6B3C,#2D9E5A); color:white;">
-        💧<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Premium Exterior Wash</span>
-      </div>
-      <div class="gallery-caption">Premium Hand Wash in Progress</div>
-    </div>
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#7D6608,#C8922A); color:white;">
-        ✨<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Ceramic Coating Application</span>
-      </div>
-      <div class="gallery-caption">Ceramic Coating — Year-long Protection</div>
-    </div>
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#5B2333,#943126); color:white;">
-        🛋️<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Interior Detail</span>
-      </div>
-      <div class="gallery-caption">Interior Deep Clean Results</div>
-    </div>
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background: linear-gradient(135deg,#1B2631,#2C3E50); color:white;">
-        🔧<span style="font-size:1rem;margin-top:8px;font-family:'DM Sans';opacity:0.8;">Engine Bay Detail</span>
-      </div>
-      <div class="gallery-caption">Engine Bay — Spotless Finish</div>
-    </div>
-  </div>
-</section>
-
-<!-- TEAM -->
-<section class="team" id="team">
-  <div class="section-tag">The Team</div>
-  <h2 class="section-title">People Behind the Shine</h2>
-  <p class="section-sub">Our crew brings passion and precision to every vehicle that pulls in.</p>
-  <div class="team-grid">
-    <div class="team-card fade-up">
-      <div class="team-photo" style="background:linear-gradient(135deg,#D4E6F1,#AED6F1);">👨‍🔧</div>
-      <div class="team-info">
-        <div class="team-name">Erik Lindström</div>
-        <div class="team-role">Founder & Head Detailer</div>
-      </div>
-    </div>
-    <div class="team-card fade-up">
-      <div class="team-photo" style="background:linear-gradient(135deg,#D5F5E3,#A9DFBF);">👩‍💼</div>
-      <div class="team-info">
-        <div class="team-name">Sara Johansson</div>
-        <div class="team-role">Customer Experience</div>
-      </div>
-    </div>
-    <div class="team-card fade-up">
-      <div class="team-photo" style="background:linear-gradient(135deg,#FDEBD0,#FAD7A0);">👨‍🔬</div>
-      <div class="team-info">
-        <div class="team-name">Marcus Berg</div>
-        <div class="team-role">Ceramic Coating Specialist</div>
-      </div>
-    </div>
-    <div class="team-card fade-up">
-      <div class="team-photo" style="background:linear-gradient(135deg,#E8DAEF,#D2B4DE);">👷</div>
-      <div class="team-info">
-        <div class="team-name">Lena Karlsson</div>
-        <div class="team-role">Interior Detailer</div>
-      </div>
-    </div>
+<section class="showcase-images">
+  <div class="showcase-grid">
+    <img src="/showcase/image-1" alt="Bild 1">
+    <img src="/showcase/image-2" alt="Bild 2">
   </div>
 </section>
 
@@ -1205,7 +1058,7 @@ footer strong { color: white; }
 <!-- FOOTER -->
 <footer>
   <p><strong>SparkWash</strong> · Industrigatan 12, 211 46 Malmö · <a href="tel:+46701234567">+46 70-123 45 67</a></p>
-  <p style="margin-top:8px;">© 2026 SparkWash. All rights reserved.</p>
+  <p style="margin-top:8px;">© 2026 SparkWash. Alla rättigheter förbehållna.</p>
 </footer>
 
 <!-- TOAST -->

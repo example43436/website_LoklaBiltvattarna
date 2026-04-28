@@ -6,6 +6,9 @@ from datetime import datetime
 
 BASE_DIR = os.path.dirname(__file__)
 app = Flask(__name__)
+CURSOR_ASSETS_DIR = "/home/nytroml/.cursor/projects/home-nytroml-lokalabiltvattarna/assets"
+SHOWCASE_IMAGE_1 = "2025-12-07-125052_hyprshot-e65b1a6c-8615-4cd6-bb28-5bbeabc71880.png"
+SHOWCASE_IMAGE_2 = "locked-e2081a76-3b29-46b1-87f8-0accfacb79b6.png"
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 SLOTS_FILE = os.path.join(DATA_DIR, 'slots.json')
@@ -42,6 +45,16 @@ def export_csv():
 @app.route('/')
 def index():
     return send_from_directory(BASE_DIR, 'index.html')
+
+
+@app.route('/showcase/image-1')
+def showcase_image_1():
+    return send_from_directory(CURSOR_ASSETS_DIR, SHOWCASE_IMAGE_1)
+
+
+@app.route('/showcase/image-2')
+def showcase_image_2():
+    return send_from_directory(CURSOR_ASSETS_DIR, SHOWCASE_IMAGE_2)
 
 # ── slots API ─────────────────────────────────────────────────────────────
 
