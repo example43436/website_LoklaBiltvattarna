@@ -2,15 +2,10 @@ from flask import Flask, jsonify, request, send_from_directory
 import json
 import csv
 import os
-from functools import lru_cache
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(__file__)
 app = Flask(__name__)
-
-SHOWCASE_DIR = os.environ.get("SHOWCASE_DIR", os.path.join(BASE_DIR, "static", "showcase"))
-SHOWCASE_IMAGE_1 = os.environ.get("SHOWCASE_IMAGE_1", "2025-12-07-125052_hyprshot-e65b1a6c-8615-4cd6-bb28-5bbeabc71880.png")
-SHOWCASE_IMAGE_2 = os.environ.get("SHOWCASE_IMAGE_2", "locked-e2081a76-3b29-46b1-87f8-0accfacb79b6.png")
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 SLOTS_FILE = os.path.join(DATA_DIR, 'slots.json')
@@ -19,7 +14,6 @@ CSV_FILE = os.path.join(DATA_DIR, 'bookings.csv')
 ADMIN_PASSWORD = "admin123"  # Change in production
 
 os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(SHOWCASE_DIR, exist_ok=True)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 
@@ -32,25 +26,6 @@ def load_json(path, default):
 def save_json(path, data):
     with open(path, 'w') as f:
         json.dump(data, f, indent=2)
-
-
-@lru_cache(maxsize=32)
-def find_file_dir(filename):
-    """Find directory containing filename without hardcoded absolute paths."""
-    preferred = [
-        SHOWCASE_DIR,
-        os.environ.get("SHOWCASE_FALLBACK_DIR", ""),
-        BASE_DIR,
-    ]
-    for directory in preferred:
-        if directory and os.path.exists(os.path.join(directory, filename)):
-            return directory
-
-    home_dir = os.path.expanduser("~")
-    for root, _, files in os.walk(home_dir):
-        if filename in files:
-            return root
-    return None
 
 def export_csv():
     bookings = load_json(BOOKINGS_FILE, [])
@@ -67,22 +42,6 @@ def export_csv():
 @app.route('/')
 def index():
     return send_from_directory(BASE_DIR, 'index.html')
-
-
-@app.route('/showcase/image-1')
-def showcase_image_1():
-    directory = find_file_dir(SHOWCASE_IMAGE_1)
-    if not directory:
-        return jsonify({'error': f'Showcase file not found: {SHOWCASE_IMAGE_1}'}), 404
-    return send_from_directory(directory, SHOWCASE_IMAGE_1)
-
-
-@app.route('/showcase/image-2')
-def showcase_image_2():
-    directory = find_file_dir(SHOWCASE_IMAGE_2)
-    if not directory:
-        return jsonify({'error': f'Showcase file not found: {SHOWCASE_IMAGE_2}'}), 404
-    return send_from_directory(directory, SHOWCASE_IMAGE_2)
 
 # ── slots API ─────────────────────────────────────────────────────────────
 
