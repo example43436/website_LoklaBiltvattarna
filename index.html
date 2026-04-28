@@ -471,6 +471,7 @@ section {
 
 .time-slot-btn .slot-time { font-weight: 600; font-size: 0.92rem; }
 .time-slot-btn .slot-avail { font-size: 0.72rem; color: inherit; opacity: 0.7; margin-top: 2px; }
+.time-slot-btn .slot-district { font-size: 0.72rem; color: inherit; opacity: 0.85; margin-top: 2px; }
 
 /* booking form */
 .booking-form {
@@ -950,7 +951,7 @@ footer strong { color: white; }
       <div id="booking-calendar"></div>
 
       <div class="time-slots-area" id="time-slots-area" style="display:none;">
-        <div class="time-slots-title">Available times for <span id="selected-date-label"></span></div>
+        <div class="time-slots-title">Tillgängliga tider för <span id="selected-date-label"></span></div>
         <div class="time-slots-grid" id="time-slots-grid"></div>
       </div>
 
@@ -1027,7 +1028,7 @@ footer strong { color: white; }
           <div id="admin-calendar"></div>
         </div>
         <div class="slots-editor" id="slots-editor">
-          <div class="slots-date-title" id="admin-date-title">Select a date to edit slots</div>
+          <div class="slots-date-title" id="admin-date-title">Välj ett datum för att redigera tider</div>
           <div id="slot-rows"></div>
           <button class="btn-add-slot" id="btn-add-slot" style="display:none;" onclick="addSlotRow()">+ Add Time Slot</button>
           <br><br>
@@ -1043,11 +1044,11 @@ footer strong { color: white; }
         <table class="bookings-table">
           <thead>
             <tr>
-              <th>ID</th><th>Name</th><th>Phone</th><th>Address</th><th>Service</th><th>Date</th><th>Time</th><th>Notes</th><th></th>
+              <th>ID</th><th>Namn</th><th>Telefon</th><th>Adress</th><th>Område</th><th>Tjänst</th><th>Datum</th><th>Tid</th><th>Notering</th><th></th>
             </tr>
           </thead>
           <tbody id="bookings-tbody">
-            <tr><td colspan="9" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>
+            <tr><td colspan="10" style="text-align:center;opacity:0.4;padding:32px;">Laddar…</td></tr>
           </tbody>
         </table>
       </div>
@@ -1069,6 +1070,7 @@ const API = '';  // same origin
 let adminPw = '';
 let selectedDate = null;
 let selectedTime = null;
+let selectedDistrict = '';
 let currentCalMonth = null;  // for booking cal
 let adminCalMonth = null;    // for admin cal
 let adminSelectedDate = null;
@@ -1145,6 +1147,7 @@ function calNext() {
 async function dayClick(dateStr) {
   selectedDate = dateStr;
   selectedTime = null;
+  selectedDistrict = '';
   updateSummary();
   buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
   await loadTimeSlots(dateStr);
@@ -1167,17 +1170,20 @@ async function loadTimeSlots(dateStr) {
 
   grid.innerHTML = slots.map(s => {
     const avail = s.available > 0;
+    const district = (s.district || '').trim() || 'Ej angivet område';
     return `<button class="time-slot-btn${selectedTime===s.time?' selected':''}"
-      ${avail ? `onclick="selectTime('${s.time}')"` : 'disabled'}
+      ${avail ? `onclick="selectTime('${s.time}', '${encodeURIComponent(district)}')"` : 'disabled'}
       title="${s.booked}/${s.capacity} booked">
       <div class="slot-time">${s.time}</div>
-      <div class="slot-avail">${avail ? s.available+' spot'+(s.available>1?'s':'')+' left' : 'Full'}</div>
+      <div class="slot-avail">${avail ? s.available+' platser kvar' : 'Fullbokad'}</div>
+      <div class="slot-district">${district}</div>
     </button>`;
   }).join('');
 }
 
-function selectTime(time) {
+function selectTime(time, encodedDistrict) {
   selectedTime = time;
+  selectedDistrict = decodeURIComponent(encodedDistrict || '');
   updateSummary();
   // Re-render slots to show selection
   document.querySelectorAll('.time-slot-btn').forEach(b => {
@@ -1190,7 +1196,11 @@ function updateSummary() {
   const t = document.getElementById('summary-text');
   if (selectedDate && selectedTime) {
     s.classList.add('visible');
-    t.textContent = `${selectedDate} at ${selectedTime}`;
+    if (selectedDistrict) {
+      t.textContent = `${selectedDate} kl ${selectedTime} (${selectedDistrict})`;
+    } else {
+      t.textContent = `${selectedDate} kl ${selectedTime}`;
+    }
   } else {
     s.classList.remove('visible');
   }
@@ -1223,7 +1233,7 @@ async function submitBooking() {
       document.getElementById('f-address').value='';
       document.getElementById('f-service').value='';
       document.getElementById('f-notes').value='';
-      selectedDate = null; selectedTime = null;
+      selectedDate = null; selectedTime = null; selectedDistrict = '';
       updateSummary();
       await loadSlots();
       buildCalendar('booking-calendar', currentCalMonth.month, currentCalMonth.year, dayClick);
@@ -1298,7 +1308,7 @@ function adminDayClick(dateStr) {
 
 function renderSlotsEditor() {
   if (!adminSelectedDate) return;
-  document.getElementById('admin-date-title').textContent = `Slots for ${adminSelectedDate}`;
+  document.getElementById('admin-date-title').textContent = `Tider för ${adminSelectedDate}`;
   document.getElementById('btn-add-slot').style.display = '';
   document.getElementById('btn-save-slots').style.display = '';
 
@@ -1313,13 +1323,15 @@ function renderSlotRows() {
       <input type="time" value="${s.time}" onchange="adminEditSlots[${i}].time=this.value">
       <label>Capacity:</label>
       <input type="number" min="1" max="20" value="${s.capacity}" style="width:70px;" onchange="adminEditSlots[${i}].capacity=parseInt(this.value)">
+      <label>Område:</label>
+      <input type="text" value="${s.district || ''}" placeholder="t.ex. Centrum" style="min-width:130px;" onchange="adminEditSlots[${i}].district=this.value.trim()">
       <button class="btn-remove-slot" onclick="removeSlotRow(${i})">✕</button>
     </div>
   `).join('');
 }
 
 function addSlotRow() {
-  adminEditSlots.push({ time: '09:00', capacity: 1 });
+  adminEditSlots.push({ time: '09:00', capacity: 1, district: '' });
   renderSlotRows();
 }
 
@@ -1331,7 +1343,14 @@ function removeSlotRow(i) {
 async function saveSlots() {
   if (!adminSelectedDate) return;
   const newSlots = JSON.parse(JSON.stringify(slotsCache));
-  newSlots[adminSelectedDate] = adminEditSlots;
+  newSlots[adminSelectedDate] = adminEditSlots
+    .filter(s => s.time && s.capacity)
+    .map(s => ({
+      time: s.time,
+      capacity: Math.max(1, parseInt(s.capacity, 10) || 1),
+      district: (s.district || '').trim()
+    }))
+    .sort((a, b) => a.time.localeCompare(b.time));
 
   const res = await fetch('/api/slots', {
     method: 'POST',
@@ -1352,12 +1371,12 @@ async function saveSlots() {
 // ── ADMIN BOOKINGS ─────────────────────────────────────────────────────────
 async function loadAdminBookings() {
   const tbody = document.getElementById('bookings-tbody');
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>';
   try {
     const res = await fetch(`/api/bookings?admin_password=${encodeURIComponent(adminPw)}`);
     const bookings = await res.json();
     if (!bookings.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;opacity:0.4;padding:32px;">No bookings yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;opacity:0.4;padding:32px;">No bookings yet.</td></tr>';
       return;
     }
     tbody.innerHTML = bookings.map(b => `
@@ -1366,6 +1385,7 @@ async function loadAdminBookings() {
         <td>${b.name}</td>
         <td>${b.phone}</td>
         <td>${b.address || '—'}</td>
+        <td>${b.district || '—'}</td>
         <td>${b.service}</td>
         <td>${b.date}</td>
         <td>${b.time}</td>
@@ -1374,7 +1394,7 @@ async function loadAdminBookings() {
       </tr>
     `).join('');
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#E74C3C;padding:32px;">Error loading bookings.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#E74C3C;padding:32px;">Error loading bookings.</td></tr>';
   }
 }
 

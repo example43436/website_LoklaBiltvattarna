@@ -2,13 +2,15 @@ from flask import Flask, jsonify, request, send_from_directory
 import json
 import csv
 import os
+from functools import lru_cache
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(__file__)
 app = Flask(__name__)
-CURSOR_ASSETS_DIR = "/home/nytroml/.cursor/projects/home-nytroml-lokalabiltvattarna/assets"
-SHOWCASE_IMAGE_1 = "2025-12-07-125052_hyprshot-e65b1a6c-8615-4cd6-bb28-5bbeabc71880.png"
-SHOWCASE_IMAGE_2 = "locked-e2081a76-3b29-46b1-87f8-0accfacb79b6.png"
+
+SHOWCASE_DIR = os.environ.get("SHOWCASE_DIR", os.path.join(BASE_DIR, "static", "showcase"))
+SHOWCASE_IMAGE_1 = os.environ.get("SHOWCASE_IMAGE_1", "2025-12-07-125052_hyprshot-e65b1a6c-8615-4cd6-bb28-5bbeabc71880.png")
+SHOWCASE_IMAGE_2 = os.environ.get("SHOWCASE_IMAGE_2", "locked-e2081a76-3b29-46b1-87f8-0accfacb79b6.png")
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 SLOTS_FILE = os.path.join(DATA_DIR, 'slots.json')
@@ -17,6 +19,7 @@ CSV_FILE = os.path.join(DATA_DIR, 'bookings.csv')
 ADMIN_PASSWORD = "admin123"  # Change in production
 
 os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(SHOWCASE_DIR, exist_ok=True)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 
@@ -30,11 +33,30 @@ def save_json(path, data):
     with open(path, 'w') as f:
         json.dump(data, f, indent=2)
 
+
+@lru_cache(maxsize=32)
+def find_file_dir(filename):
+    """Find directory containing filename without hardcoded absolute paths."""
+    preferred = [
+        SHOWCASE_DIR,
+        os.environ.get("SHOWCASE_FALLBACK_DIR", ""),
+        BASE_DIR,
+    ]
+    for directory in preferred:
+        if directory and os.path.exists(os.path.join(directory, filename)):
+            return directory
+
+    home_dir = os.path.expanduser("~")
+    for root, _, files in os.walk(home_dir):
+        if filename in files:
+            return root
+    return None
+
 def export_csv():
     bookings = load_json(BOOKINGS_FILE, [])
     if not bookings:
         return
-    keys = ["id", "name", "phone", "address", "service", "date", "time", "notes", "created_at"]
+    keys = ["id", "name", "phone", "address", "district", "service", "date", "time", "notes", "created_at"]
     with open(CSV_FILE, 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=keys, extrasaction='ignore')
         writer.writeheader()
@@ -49,12 +71,18 @@ def index():
 
 @app.route('/showcase/image-1')
 def showcase_image_1():
-    return send_from_directory(CURSOR_ASSETS_DIR, SHOWCASE_IMAGE_1)
+    directory = find_file_dir(SHOWCASE_IMAGE_1)
+    if not directory:
+        return jsonify({'error': f'Showcase file not found: {SHOWCASE_IMAGE_1}'}), 404
+    return send_from_directory(directory, SHOWCASE_IMAGE_1)
 
 
 @app.route('/showcase/image-2')
 def showcase_image_2():
-    return send_from_directory(CURSOR_ASSETS_DIR, SHOWCASE_IMAGE_2)
+    directory = find_file_dir(SHOWCASE_IMAGE_2)
+    if not directory:
+        return jsonify({'error': f'Showcase file not found: {SHOWCASE_IMAGE_2}'}), 404
+    return send_from_directory(directory, SHOWCASE_IMAGE_2)
 
 # ── slots API ─────────────────────────────────────────────────────────────
 
@@ -103,8 +131,6 @@ def create_booking():
     # Check slot availability
     date = data['date']
     time = data['time']
-    slot_key = f"{date}_{time}"
-
     taken = [b for b in bookings if b['date'] == date and b['time'] == time]
     date_slots = slots.get(date, [])
     slot_info = next((s for s in date_slots if s['time'] == time), None)
@@ -121,6 +147,7 @@ def create_booking():
         'name': data['name'],
         'phone': data['phone'],
         'address': data['address'],
+        'district': slot_info.get('district', ''),
         'service': data['service'],
         'date': date,
         'time': time,
@@ -163,6 +190,7 @@ def get_availability():
         result.append({
             'time': slot['time'],
             'capacity': cap,
+            'district': slot.get('district', ''),
             'booked': taken,
             'available': cap - taken
         })
