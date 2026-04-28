@@ -890,21 +890,20 @@ footer strong { color: white; }
 
 <!-- SERVICES -->
 <section class="services" id="services">
-  <div class="section-tag">Våra tjänster</div>
   <h2 class="section-title">Tjänster och priser</h2>
   <p class="section-sub">Alla tvättar avslutas med en kontroll så att bilen lämnar oss i toppskick.</p>
   <div class="services-grid">
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#EBF5EE;">🚿</div>
       <h3>Express-tvätt</h3>
-      <p>Snabb handtvätt utvändigt med avspolning och torkning.</p>
-      <div class="service-price">149 kr</div>
+      <p>Utförlig handtvätt utvändigt med avspolning och torkning.</p>
+      <div class="service-price">299 kr</div>
     </div>
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#FEF9EC;">🛋️</div>
-      <h3>Invändig rekond</h3>
-      <p>Djupdammsugning, rengöring av paneler och mattor samt vård av interiören.</p>
-      <div class="service-price">449 kr</div>
+      <h3>Premium-tvätt</h3>
+      <p>Invändigt och utvändigt, djupdammsugning, rengöring av paneler och mattor samt vård av interiören.</p>
+      <div class="service-price">499 kr</div>
     </div>
     <div class="service-card fade-up">
       <div class="service-icon" style="background:#FDF0EE;">🏆</div>
@@ -927,7 +926,7 @@ footer strong { color: white; }
 <section class="booking" id="booking">
   <div class="section-tag">Resarvera Din Tid</div>
   <h2 class="section-title">Boka en Biltvätt</h2>
-  <p class="section-sub">Boka tid från tillgängliga tider. Betalning görs på plats via swish eller kontant.</p>
+  <p class="section-sub">Boka tid från tillgängliga tider och distrikt. Betalning görs på plats via swish eller kontant.</p>
 
   <div class="booking-layout">
     <!-- Left: Calendar + time slots -->
@@ -969,14 +968,14 @@ footer strong { color: white; }
           <label>Service</label>
           <select id="f-service">
             <option value="">Välj en service…</option>
-            <option value="Express Wash">Express Wash — 149 kr</option>
-            <option value="Interior Detail">Interior Detail — 449 kr</option>
-            <option value="Full Detail">Full Detail — 899 kr</option>
+            <option value="Express Wash">Express-tvätt — 299 kr</option>
+            <option value="Interior Detail">Premium-tvätt — 499 kr</option>
+            <option value="Full Detail">Helrekond — 899 kr</option>
           </select>
         </div>
         <div class="form-group">
           <label>Notes (optional)</label>
-          <textarea id="f-notes" placeholder="e.g. SUV, needs extra time on rims…"></textarea>
+          <textarea id="f-notes" placeholder="e.g. SUV, har lite rost..."></textarea>
         </div>
         <button class="form-submit" id="submit-btn" onclick="submitBooking()">
           Confirm Booking
