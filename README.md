@@ -17,26 +17,18 @@ This project is now set up so a hosting provider can run it directly as a Flask 
 - Production command:
   - `gunicorn app:app`
 - The app reads `PORT` automatically in `app.py`.
-- To persist bookings/slots across deploys, set a persistent `DATA_DIR`.
+- Persistent data location can be configured with environment variables:
+  - `APP_DATA_FILE` (default: `data/app-data.json`)
+  - `APP_CSV_FILE` (default: `data/bookings.csv`)
+  - `APP_DATA_DIR` (optional base dir used by defaults)
 
-### Railway persistence (important)
+### Railway persistence
 
-If you redeploy and data disappears, your app is writing to ephemeral container storage.
-
-1. Add a Railway Volume to your service.
-2. Set env var `DATA_DIR` to a path inside that volume, for example:
-   - `/data/lokalabiltvattarna-data`
-3. Redeploy.
-
-The app stores these files in `DATA_DIR`:
-- `slots.json`
-- `bookings.json`
-- `bookings.csv`
-
-On startup, the app will also do a one-time migration from local `./data` into `DATA_DIR` if the destination files do not exist yet.
+To keep bookings and slots after redeploys, store `APP_DATA_FILE` on a mounted persistent volume path in Railway (for example `/data/app-data.json`).
+If `APP_DATA_FILE` points to ephemeral container storage, data will reset on deploy.
 
 ## Notes
 
 - Frontend file is served from project root: `index.html`
-- Booking/slot data is stored in `DATA_DIR` (defaults to `./data` if no persistent path is configured)
+- Booking/slot data is stored in `data/`
 - Change `ADMIN_PASSWORD` in `app.py` before production use

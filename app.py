@@ -7,70 +7,47 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(__file__)
 app = Flask(__name__)
 
-def resolve_data_dir():
-    """
-    Pick a persistent data directory when available.
-    Priority:
-    1) DATA_DIR env var
-    2) RAILWAY_VOLUME_MOUNT_PATH env var (Railway volume)
-    3) /data if present
-    4) local ./data fallback
-    """
-    explicit = os.environ.get("DATA_DIR")
-    if explicit:
-        return explicit
-
-    railway_volume = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH")
-    if railway_volume:
-        return os.path.join(railway_volume, "lokalabiltvattarna-data")
-
-    if os.path.isdir("/data"):
-        return "/data/lokalabiltvattarna-data"
-
-    return os.path.join(BASE_DIR, "data")
-
-
-def maybe_migrate_local_data(target_dir):
-    """
-    One-time best-effort migration from local ./data into persistent target dir.
-    """
-    local_dir = os.path.join(BASE_DIR, "data")
-    if os.path.abspath(local_dir) == os.path.abspath(target_dir):
-        return
-    if not os.path.isdir(local_dir):
-        return
-
-    for filename in ["slots.json", "bookings.json", "bookings.csv"]:
-        src = os.path.join(local_dir, filename)
-        dst = os.path.join(target_dir, filename)
-        if os.path.exists(src) and not os.path.exists(dst):
-            with open(src, "rb") as in_f, open(dst, "wb") as out_f:
-                out_f.write(in_f.read())
-
-
-DATA_DIR = resolve_data_dir()
-SLOTS_FILE = os.path.join(DATA_DIR, 'slots.json')
-BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
-CSV_FILE = os.path.join(DATA_DIR, 'bookings.csv')
+DATA_DIR = os.environ.get("APP_DATA_DIR", os.path.join(BASE_DIR, "data"))
+DATA_FILE = os.environ.get("APP_DATA_FILE", os.path.join(DATA_DIR, "app-data.json"))
+CSV_FILE = os.environ.get("APP_CSV_FILE", os.path.join(DATA_DIR, "bookings.csv"))
+LEGACY_SLOTS_FILE = os.path.join(DATA_DIR, "slots.json")
+LEGACY_BOOKINGS_FILE = os.path.join(DATA_DIR, "bookings.json")
 ADMIN_PASSWORD = "admin123"  # Change in production
 
-os.makedirs(DATA_DIR, exist_ok=True)
-maybe_migrate_local_data(DATA_DIR)
+os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
+os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 
-def load_json(path, default):
-    if os.path.exists(path):
-        with open(path) as f:
-            return json.load(f)
-    return default
+def read_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE) as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            data.setdefault("slots", {})
+            data.setdefault("bookings", [])
+            return data
 
-def save_json(path, data):
-    with open(path, 'w') as f:
+    # one-time migration fallback from old files
+    slots = {}
+    bookings = []
+    if os.path.exists(LEGACY_SLOTS_FILE):
+        with open(LEGACY_SLOTS_FILE) as f:
+            slots = json.load(f)
+    if os.path.exists(LEGACY_BOOKINGS_FILE):
+        with open(LEGACY_BOOKINGS_FILE) as f:
+            bookings = json.load(f)
+    data = {"slots": slots, "bookings": bookings}
+    write_data(data)
+    return data
+
+def write_data(data):
+    tmp_file = f"{DATA_FILE}.tmp"
+    with open(tmp_file, "w") as f:
         json.dump(data, f, indent=2)
+    os.replace(tmp_file, DATA_FILE)
 
-def export_csv():
-    bookings = load_json(BOOKINGS_FILE, [])
+def export_csv(bookings):
     if not bookings:
         return
     keys = ["id", "name", "phone", "address", "district", "service", "date", "time", "notes", "created_at"]
@@ -89,7 +66,7 @@ def index():
 
 @app.route('/api/slots', methods=['GET'])
 def get_slots():
-    slots = load_json(SLOTS_FILE, {})
+    slots = read_data()["slots"]
     return jsonify(slots)
 
 @app.route('/api/slots', methods=['POST'])
@@ -98,7 +75,9 @@ def set_slots():
     if data.get('admin_password') != ADMIN_PASSWORD:
         return jsonify({'error': 'Unauthorized'}), 403
     slots = data.get('slots', {})
-    save_json(SLOTS_FILE, slots)
+    current = read_data()
+    current["slots"] = slots
+    write_data(current)
     return jsonify({'success': True})
 
 # ── bookings API ──────────────────────────────────────────────────────────
@@ -115,7 +94,7 @@ def get_bookings():
     pw = request.args.get('admin_password', '')
     if pw != ADMIN_PASSWORD:
         return jsonify({'error': 'Unauthorized'}), 403
-    bookings = load_json(BOOKINGS_FILE, [])
+    bookings = read_data()["bookings"]
     return jsonify(bookings)
 
 @app.route('/api/bookings', methods=['POST'])
@@ -126,8 +105,9 @@ def create_booking():
         if not data.get(field):
             return jsonify({'error': f'Missing field: {field}'}), 400
 
-    bookings = load_json(BOOKINGS_FILE, [])
-    slots = load_json(SLOTS_FILE, {})
+    data_store = read_data()
+    bookings = data_store["bookings"]
+    slots = data_store["slots"]
 
     # Check slot availability
     date = data['date']
@@ -157,8 +137,9 @@ def create_booking():
     }
 
     bookings.append(booking)
-    save_json(BOOKINGS_FILE, bookings)
-    export_csv()
+    data_store["bookings"] = bookings
+    write_data(data_store)
+    export_csv(bookings)
 
     return jsonify({'success': True, 'booking_id': booking['id']})
 
@@ -167,10 +148,12 @@ def delete_booking(booking_id):
     data = request.json or {}
     if data.get('admin_password') != ADMIN_PASSWORD:
         return jsonify({'error': 'Unauthorized'}), 403
-    bookings = load_json(BOOKINGS_FILE, [])
+    data_store = read_data()
+    bookings = data_store["bookings"]
     bookings = [b for b in bookings if b['id'] != booking_id]
-    save_json(BOOKINGS_FILE, bookings)
-    export_csv()
+    data_store["bookings"] = bookings
+    write_data(data_store)
+    export_csv(bookings)
     return jsonify({'success': True})
 
 @app.route('/api/availability', methods=['GET'])
@@ -180,8 +163,9 @@ def get_availability():
     if not date:
         return jsonify({'error': 'date param required'}), 400
 
-    slots = load_json(SLOTS_FILE, {})
-    bookings = load_json(BOOKINGS_FILE, [])
+    data_store = read_data()
+    slots = data_store["slots"]
+    bookings = data_store["bookings"]
 
     date_slots = slots.get(date, [])
     result = []
@@ -203,10 +187,11 @@ def download_csv():
     pw = request.args.get('admin_password', '')
     if pw != ADMIN_PASSWORD:
         return jsonify({'error': 'Unauthorized'}), 403
-    export_csv()
-    return send_from_directory(DATA_DIR, 'bookings.csv', as_attachment=True)
+    bookings = read_data()["bookings"]
+    export_csv(bookings)
+    return send_from_directory(os.path.dirname(CSV_FILE), os.path.basename(CSV_FILE), as_attachment=True)
 
 if __name__ == '__main__':
-    os.makedirs(DATA_DIR, exist_ok=True)
+    read_data()
     port = int(os.environ.get("PORT", "5000"))
     app.run(host='0.0.0.0', port=port, debug=False)
