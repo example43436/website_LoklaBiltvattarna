@@ -7,13 +7,55 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(__file__)
 app = Flask(__name__)
 
-DATA_DIR = os.path.join(BASE_DIR, 'data')
+def resolve_data_dir():
+    """
+    Pick a persistent data directory when available.
+    Priority:
+    1) DATA_DIR env var
+    2) RAILWAY_VOLUME_MOUNT_PATH env var (Railway volume)
+    3) /data if present
+    4) local ./data fallback
+    """
+    explicit = os.environ.get("DATA_DIR")
+    if explicit:
+        return explicit
+
+    railway_volume = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH")
+    if railway_volume:
+        return os.path.join(railway_volume, "lokalabiltvattarna-data")
+
+    if os.path.isdir("/data"):
+        return "/data/lokalabiltvattarna-data"
+
+    return os.path.join(BASE_DIR, "data")
+
+
+def maybe_migrate_local_data(target_dir):
+    """
+    One-time best-effort migration from local ./data into persistent target dir.
+    """
+    local_dir = os.path.join(BASE_DIR, "data")
+    if os.path.abspath(local_dir) == os.path.abspath(target_dir):
+        return
+    if not os.path.isdir(local_dir):
+        return
+
+    for filename in ["slots.json", "bookings.json", "bookings.csv"]:
+        src = os.path.join(local_dir, filename)
+        dst = os.path.join(target_dir, filename)
+        if os.path.exists(src) and not os.path.exists(dst):
+            with open(src, "rb") as in_f, open(dst, "wb") as out_f:
+                out_f.write(in_f.read())
+
+
+DATA_DIR = resolve_data_dir()
 SLOTS_FILE = os.path.join(DATA_DIR, 'slots.json')
 BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
 CSV_FILE = os.path.join(DATA_DIR, 'bookings.csv')
 ADMIN_PASSWORD = "admin123"  # Change in production
 
 os.makedirs(DATA_DIR, exist_ok=True)
+maybe_migrate_local_data(DATA_DIR)
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 
