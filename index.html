@@ -804,6 +804,189 @@ section {
 
 .btn-csv:hover { opacity: 0.85; }
 
+/* ── GROUPED BOOKINGS ── */
+.date-group {
+  margin-bottom: 28px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.date-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: rgba(200,146,42,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  user-select: none;
+  gap: 12px;
+}
+
+.date-group-header:hover { background: rgba(200,146,42,0.18); }
+
+.date-group-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-group-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+}
+
+.date-group-badge {
+  background: rgba(200,146,42,0.25);
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.date-group-toggle {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+
+.date-group.collapsed .date-group-toggle { transform: rotate(-90deg); }
+.date-group.collapsed .date-group-body { display: none; }
+
+.date-group-body {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Timeline layout inside each date group */
+.booking-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-card {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: start;
+  gap: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.15s;
+}
+
+.booking-card:last-child { border-bottom: none; }
+.booking-card:hover { background: rgba(255,255,255,0.03); }
+
+.booking-card-time {
+  padding: 16px 0 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  min-width: 80px;
+}
+
+.booking-time-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.booking-district-pill {
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: rgba(26,107,60,0.3);
+  color: #6FC98E;
+  border-radius: 999px;
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.booking-card-info {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.booking-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+}
+
+.booking-card-sub {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.booking-card-sub span::before {
+  content: '';
+  margin-right: 4px;
+}
+
+.booking-service-tag {
+  display: inline-block;
+  background: rgba(26,107,60,0.25);
+  color: #6FC98E;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.booking-card-notes {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  font-style: italic;
+  margin-top: 3px;
+}
+
+.booking-card-id {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.2);
+  font-family: monospace;
+  margin-top: 2px;
+}
+
+.booking-card-actions {
+  padding: 16px 16px 16px 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.bookings-summary-bar {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.bookings-summary-bar strong { color: white; }
+
 /* ── FOOTER ── */
 footer {
   background: var(--ink);
@@ -1018,19 +1201,18 @@ footer strong { color: white; }
 
     <!-- Bookings pane -->
     <div class="admin-pane" id="pane-bookings">
-      <a class="btn-csv" id="csv-download-link" href="#" onclick="downloadCSV(event)">⬇ Download CSV</a>
-      <div style="overflow-x:auto;">
-        <table class="bookings-table">
-          <thead>
-            <tr>
-              <th>ID</th><th>Namn</th><th>Telefon</th><th>Adress</th><th>Område</th><th>Tjänst</th><th>Datum</th><th>Tid</th><th>Notering</th><th></th>
-            </tr>
-          </thead>
-          <tbody id="bookings-tbody">
-            <tr><td colspan="10" style="text-align:center;opacity:0.4;padding:32px;">Laddar…</td></tr>
-          </tbody>
-        </table>
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <span style="color:rgba(255,255,255,0.5); font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em;">Filter:</span>
+          <select id="bookings-filter-date" onchange="renderGroupedBookings()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:8px;color:white;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+            <option value="">Alla datum</option>
+          </select>
+          <input id="bookings-search" oninput="renderGroupedBookings()" placeholder="Sök namn / telefon…" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:8px;color:white;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;min-width:180px;" />
+        </div>
+        <a class="btn-csv" id="csv-download-link" href="#" onclick="downloadCSV(event)" style="margin-bottom:0;">⬇ Download CSV</a>
       </div>
+      <div id="bookings-summary-bar" style="margin-bottom:20px;"></div>
+      <div id="bookings-grouped"></div>
     </div>
   </div>
 </section>
@@ -1348,37 +1530,143 @@ async function saveSlots() {
 }
 
 // ── ADMIN BOOKINGS ─────────────────────────────────────────────────────────
+let allBookings = [];
+
 async function loadAdminBookings() {
-  const tbody = document.getElementById('bookings-tbody');
-  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;opacity:0.4;padding:32px;">Loading…</td></tr>';
+  const container = document.getElementById('bookings-grouped');
+  container.innerHTML = '<div style="text-align:center;opacity:0.4;padding:48px 32px;">Laddar…</div>';
   try {
     const res = await fetch(`/api/bookings?admin_password=${encodeURIComponent(adminPw)}`);
-    const bookings = await res.json();
-    if (!bookings.length) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;opacity:0.4;padding:32px;">No bookings yet.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = bookings.map(b => `
-      <tr>
-        <td>${b.id}</td>
-        <td>${b.name}</td>
-        <td>${b.phone}</td>
-        <td>${b.address || '—'}</td>
-        <td>${b.district || '—'}</td>
-        <td>${b.service}</td>
-        <td>${b.date}</td>
-        <td>${b.time}</td>
-        <td>${b.notes || '—'}</td>
-        <td><button class="btn-delete" onclick="deleteBooking('${b.id}')">Delete</button></td>
-      </tr>
-    `).join('');
+    allBookings = await res.json();
+    if (!Array.isArray(allBookings)) allBookings = [];
+    populateDateFilter();
+    renderGroupedBookings();
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#E74C3C;padding:32px;">Error loading bookings.</td></tr>';
+    container.innerHTML = '<div style="text-align:center;color:#E74C3C;padding:48px 32px;">Kunde inte ladda bokningar.</div>';
   }
 }
 
+function populateDateFilter() {
+  const sel = document.getElementById('bookings-filter-date');
+  const current = sel.value;
+  const dates = [...new Set(allBookings.map(b => b.date))].sort();
+  sel.innerHTML = '<option value="">Alla datum</option>' +
+    dates.map(d => `<option value="${d}"${d===current?' selected':''}>${formatDateLabel(d)}</option>`).join('');
+}
+
+function formatDateLabel(dateStr) {
+  // e.g. "2025-06-14" → "Lör 14 jun"
+  try {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('sv-SE', { weekday:'short', day:'numeric', month:'short' });
+  } catch { return dateStr; }
+}
+
+function renderGroupedBookings() {
+  const container = document.getElementById('bookings-grouped');
+  const summaryBar = document.getElementById('bookings-summary-bar');
+  const filterDate = document.getElementById('bookings-filter-date').value;
+  const search = (document.getElementById('bookings-search').value || '').toLowerCase().trim();
+
+  let filtered = allBookings.filter(b => {
+    if (filterDate && b.date !== filterDate) return false;
+    if (search) {
+      const haystack = `${b.name} ${b.phone} ${b.address} ${b.district} ${b.service}`.toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+
+  // Summary bar
+  const totalCount = filtered.length;
+  const dateCount = new Set(filtered.map(b => b.date)).size;
+  summaryBar.innerHTML = totalCount === 0 ? '' : `
+    <div class="bookings-summary-bar">
+      <span>📋 <strong>${totalCount}</strong> bokning${totalCount !== 1 ? 'ar' : ''}</span>
+      <span>📅 <strong>${dateCount}</strong> datum</span>
+    </div>`;
+
+  if (!filtered.length) {
+    container.innerHTML = '<div style="text-align:center;opacity:0.4;padding:48px 32px;">' +
+      (allBookings.length ? 'Inga bokningar matchar filtret.' : 'Inga bokningar ännu.') + '</div>';
+    return;
+  }
+
+  // Group by date, sort dates ascending, then sort bookings within each date by time
+  const groups = {};
+  filtered.forEach(b => {
+    if (!groups[b.date]) groups[b.date] = [];
+    groups[b.date].push(b);
+  });
+  const sortedDates = Object.keys(groups).sort();
+  sortedDates.forEach(d => groups[d].sort((a,b) => a.time.localeCompare(b.time)));
+
+  const today = new Date().toISOString().slice(0,10);
+
+  container.innerHTML = sortedDates.map(date => {
+    const bookings = groups[date];
+    const label = formatDateLabel(date);
+    const isToday = date === today;
+    const isPast = date < today;
+
+    const cardsHtml = bookings.map(b => {
+      const district = (b.district || '').trim();
+      const safeId = b.id.replace(/'/g, "\\'");
+      return `
+        <div class="booking-card">
+          <div class="booking-card-time">
+            <span class="booking-time-label">${b.time}</span>
+            ${district ? `<span class="booking-district-pill" title="${district}">${district}</span>` : ''}
+          </div>
+          <div class="booking-card-info">
+            <div class="booking-card-name">${escHtml(b.name)}</div>
+            <div class="booking-card-sub">
+              <span>📞 ${escHtml(b.phone)}</span>
+              <span>📍 ${escHtml(b.address || '—')}</span>
+            </div>
+            <div class="booking-service-tag">${escHtml(b.service)}</div>
+            ${b.notes ? `<div class="booking-card-notes">"${escHtml(b.notes)}"</div>` : ''}
+            <div class="booking-card-id">${b.id}</div>
+          </div>
+          <div class="booking-card-actions">
+            <button class="btn-delete" onclick="deleteBooking('${safeId}')">Ta bort</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    const todayBadge = isToday ? ' <span style="background:rgba(26,107,60,0.4);color:#6FC98E;font-size:0.7rem;font-weight:700;border-radius:999px;padding:2px 8px;vertical-align:middle;">IDAG</span>' : '';
+    const pastStyle = isPast && !isToday ? 'opacity:0.6;' : '';
+
+    return `
+      <div class="date-group" id="dg-${date}" style="${pastStyle}">
+        <div class="date-group-header" onclick="toggleDateGroup('${date}')">
+          <div class="date-group-title">
+            📅 ${label}${todayBadge}
+          </div>
+          <div class="date-group-meta">
+            <span class="date-group-badge">${bookings.length} bokning${bookings.length !== 1 ? 'ar' : ''}</span>
+            <span>${bookings[0].time}–${bookings[bookings.length-1].time}</span>
+            <span class="date-group-toggle">▾</span>
+          </div>
+        </div>
+        <div class="date-group-body">
+          <div class="booking-timeline">${cardsHtml}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleDateGroup(date) {
+  const el = document.getElementById('dg-' + date);
+  if (el) el.classList.toggle('collapsed');
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 async function deleteBooking(id) {
-  if (!confirm('Delete this booking?')) return;
+  if (!confirm('Ta bort denna bokning?')) return;
   const res = await fetch(`/api/bookings/${id}`, {
     method: 'DELETE',
     headers: {'Content-Type':'application/json'},
@@ -1386,11 +1674,13 @@ async function deleteBooking(id) {
   });
   const data = await res.json();
   if (data.success) {
-    toast('Booking deleted.');
-    loadAdminBookings();
+    toast('Bokning borttagen.');
+    allBookings = allBookings.filter(b => b.id !== id);
+    populateDateFilter();
+    renderGroupedBookings();
     await loadSlots();
   } else {
-    toast(data.error || 'Error deleting.', 'error');
+    toast(data.error || 'Fel vid borttagning.', 'error');
   }
 }
 
